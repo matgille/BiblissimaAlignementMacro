@@ -1,5 +1,4 @@
-# Aligneur unilingue
-# Atelier cluster 7 biblissima. Collation TEI vers TEI
+# Atelier cluster 7 biblissima. Alignement macrostructurel
 
 Notebook en support de l'atelier Collation des journées du Cluster 7 Biblissima, organisées à l'École nationale des 
 chartes du 14 au 16 décembre 2023. L'atelier est mené par Lucence Ing et Matthias Gille Levenson.
