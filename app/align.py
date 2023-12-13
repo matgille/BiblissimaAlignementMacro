@@ -10,11 +10,6 @@ import collatex
 import lxml.etree as ET
 
 
-def test_file_writing(object, name, format):
-    with open(f"/home/mgl/Documents/{name}", "w") as output_file:
-        if format == "json":
-            json.dump(object, output_file)
-
 
 def generateur_id(size=6, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits) -> str:
     random_string = ''.join(random.choice(chars) for _ in range(size))
@@ -66,14 +61,9 @@ def print_aligned_sents(aligned_table: list, index):
 
 def check_if_match(json_table: str, target_id: str) -> (bool, str):
     json_table = json.loads(json_table)
-    with open("/home/mgl/Documents/test/json_table.json", "w") as output_table:
-        json.dump(json_table, output_table)
     # On produit l'alignement un à un
     aligned_table = list(zip([token[0] if token else None for token in json_table['table'][0]],
                              [token[0] if token else None for token in json_table['table'][1]]))
-    test_file_writing(object=aligned_table, name="aligned.json", format="json")
-    with open("/home/mgl/Documents/test/json_aligned_table.json", "w") as output_table:
-        json.dump(aligned_table, output_table)
 
     # Ici on ne va chercher que le pivot, ce qui n'est pas suffisant parfois (cas de la ponctuation). Il
     # Faudrait trouver une méthode avec plus de contexte.
@@ -374,37 +364,7 @@ class Aligner:
                     exit(0)
 
             # On écrit l'arbre dans le fichier xml correspondant.
-            write_tree(f"/home/mgl/Bureau/Travail/projets/alignement/alignement_global_unilingue/data/results/{target_document}{self.output_file_prefix}.xml",
+            write_tree(f"data/results/{target_document}{self.output_file_prefix}.xml",
                         self.output_tree[target_document])
 
 
-
-if __name__ == '__main__':
-    # Le contexte pour boucler
-    context_query_1 = "//tei:div[@type='partie']"
-    # La requête à effectuer
-    example_query_1 = "//tei:div[@type='chapitre']"
-
-    # On va chercher tous les éléments au même niveau de hiérarchie, sinon ça ne marche pas
-    context_query_2 = "//tei:div[@type='chapitre']"
-    example_query_2 = "descendant::node()[self::tei:head or self::tei:div]"
-
-    aligner = Aligner(
-        target_path="/home/mgl/Bureau/Travail/projets/alignement/alignement_global_unilingue/data/files_no_structure"
-                    "/*.xml",
-        source_file="/home/mgl/Bureau/Travail/projets/alignement/alignement_global_unilingue/data/Source"
-                    "/Sal_J.xml",
-        output_files_prefix="")
-    # /home/mgl/Bureau/Travail/projets/alignement/alignement_global_unilingue/data/result/
-    aligner.align(query=example_query_1, context=context_query_1, text_proportion=.20)
-    # Le titre est plus variable et plus court, il est donc utile d'augmenter la fenêtre de comparaison à 1 voire 2
-    # fois la taille de la division
-    aligner.align(query=example_query_2, context=context_query_2, text_proportion=1)
-    # exit(0)
-
-    for n in range(1, 24):
-        # Il y a un problème qui fait que seule une boucle à ce niveau fonctionne
-        print(n)
-        context_query_3 = f"//tei:div[@type='chapitre'][@n = {n}]/descendant::tei:div"
-        example_query_3 = "child::tei:p"
-        aligner.align(query=example_query_3, context=context_query_3, text_proportion=0.5)
