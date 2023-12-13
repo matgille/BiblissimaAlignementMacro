@@ -362,7 +362,11 @@ class Aligner:
                 except Exception:
                     traceback.print_exc()
                     exit(0)
-
+            
+            try:
+                os.makedirs("data/results/")
+            except FileExistsError:
+                pass
             # On écrit l'arbre dans le fichier xml correspondant.
             write_tree(f"data/results/{target_document}{self.output_file_prefix}.xml",
                         self.output_tree[target_document])
