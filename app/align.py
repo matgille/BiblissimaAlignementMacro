@@ -168,13 +168,11 @@ class Aligner:
                     if len(node.xpath("@xml:id")) > 0:
                         if node.xpath("@xml:id")[0] == min_id:
                             min_position_in_full_list = idx
-                            print(f"Minimal pos found for first loop: {min_position_in_full_list}")
                     else:
                         pass
                 else:
                     if len(node.xpath("@xml:id")) > 0:
                         if node.xpath("@xml:id")[0] == following_anchor.xpath("@xml:id")[0]:
-                            print("Minimal pos found")
                             min_position_in_full_list = idx
                     else:
                         pass
@@ -182,10 +180,7 @@ class Aligner:
                 # Maintenant on cherche le dernier mot de la structure
                 if len(node.xpath("@xml:id")) > 0:
                     if node.xpath("@xml:id")[0] == max_id:
-                        print("Maximal pos found")
                         max_position_in_full_list = idx
-            print(f"Minimal range id: {min_id} | Maximal range id: {max_id}")
-            print(f"Positions: {min_position_in_full_list} and {max_position_in_full_list}")
 
             # On sélectionne les noeuds à insérer en faisant attention à l'index
             if index == 0:
@@ -246,7 +241,6 @@ class Aligner:
                                                        namespaces=self.ns_decl)
                 target_tokens_ids = list(zip(target_tokens, target_ids))
                 current_source_position = 0
-                current_target_position = 0
                 source_lemmas = context_source_node.xpath("descendant::node()[self::tei:w or self::tei:pc]/@lemma",
                                                           namespaces=self.ns_decl)
                 source_ids = context_source_node.xpath("descendant::node()[self::tei:w or self::tei:pc]/@xml:id",
@@ -258,14 +252,6 @@ class Aligner:
                 # On itère sur chaque division
                 matching_id = str
                 for index, division in enumerate(structure_source_elements):
-
-                    # On a besoin de l'identifiant de fin de la division courante du
-                    # document source. On va
-                    # ensuite regarder si ce token est dans la table alignée, pour identifier
-                    # la fin de la division du document cible.
-                    # TODO: ici ajouter la possibilité de travailler sur un document en partie structuré
-                    # (exemple: un test dans le document cible pour voir si la division existe.) Si elle existe, on
-                    # passe à la division suivante en prenant le dernier xml:id comme ancre.
                     try:
                         last_token_current_div = division.xpath(
                             "descendant::node()[self::tei:w or self::tei:pc][last()]/@xml:id", namespaces=self.ns_decl)[
@@ -295,10 +281,6 @@ class Aligner:
                     target_search_range = [max(0, current_target_position - tokens_fraction),
                                            current_target_position + tokens_fraction]
                     print(f"Division {index + 1}")
-                    print(f"Last matching id: {matching_id}")
-                    print(f"Current target position: {current_target_position}")
-                    print(f"Source search range: {source_search_range}")
-                    print(f"Target search range: {target_search_range}")
                     source_tokens_to_compare = source_lemmas_ids[source_search_range[0]: source_search_range[1]]
 
                     # On crée les données tel que le veut collatex
